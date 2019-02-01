@@ -1,0 +1,38 @@
+config:
+  payload:
+    path: "keyword.csv"
+    fields:
+      - "keywords"        
+  target: "http://www.amazon.com"
+  phases:
+   - duration: 10
+     arrivaRate: 1
+    
+  environments:
+   Staging:
+    target: 'https://www.amazon.in'
+    phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: "AmazonIndia"
+   Production:
+    target: 'https://www.amazon.de'
+    phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 3
+      name: "AmazonGermany"
+
+scenarios:
+ - name: "Prime" 
+   flow:
+    - get:
+        url: "/amazonprime"
+ - name: "search" 
+   flow:
+    - log: "value passed from CSV is {{ keywords }}"
+    - get:
+        url: "/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords={{ keywords }}"
+        
+ 
